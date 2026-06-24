@@ -1,5 +1,11 @@
+"""
+Minimal, type-safe environment variable validation for Python.
+
+:license: MIT, see LICENSE for more details.
+"""
+
 from envly.env import Environment, FieldSchema
-from envly.errors import EnvError
+from envly.errors import EnvlyError, InvalidEnvError, MissingEnvError, ValidationError
 from envly.fields import (
     EnvVar,
     BoolVar,
@@ -19,7 +25,10 @@ from envly.types import SecretStr
 __all__ = [
     "Environment",
     "FieldSchema",
-    "EnvError",
+    "EnvlyError",
+    "MissingEnvError",
+    "InvalidEnvError",
+    "ValidationError",
     "EnvVar",
     "SecretStr",
     "StringVar",
@@ -35,4 +44,4 @@ __all__ = [
     "ListVar",
 ]
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"

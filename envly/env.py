@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import os
-import dotenv
+import pathlib
 from typing import Any, ClassVar, TypedDict, override
 
 from envly.fields import EnvVar, _MISSING
+from envly.utils import _load_env_file
 
 __all__ = ["Environment"]
 
@@ -81,7 +82,7 @@ class Environment(metaclass=_EnvironmentMeta):
 
     Parameters
     ----------
-    env_path: :class:`str`
+    env_path: :class:`str` | :class:`pathlib.Path`
         The path to the the environment file.
         By default this is the `.env` in the folder root.
     source: :class:`dict[str, str]`
@@ -93,10 +94,12 @@ class Environment(metaclass=_EnvironmentMeta):
     __env_prefix__: ClassVar[str]
 
     def __init__(
-        self, env_path: str = ".env", source: dict[str, str] | None = None
+        self,
+        env_path: str | pathlib.Path = ".env",
+        source: dict[str, str] | None = None,
     ) -> None:
         if not source and env_path:
-            self._load_env_file(env_path)
+            _load_env_file(env_path)
 
         _source: dict[str, str] = os.environ if source is None else source  # type: ignore[assignment]
         prefix = type(self).__env_prefix__
@@ -115,14 +118,6 @@ class Environment(metaclass=_EnvironmentMeta):
     def __repr__(self) -> str:
         pairs = ", ".join(f"{k}={getattr(self, k)!r}" for k in type(self).__env_vars__)
         return f"{type(self).__name__}({pairs})"
-
-    @staticmethod
-    def _load_env_file(env_path: str) -> None:
-        if not os.path.isfile(env_path):
-            env_path = dotenv.find_dotenv(env_path, usecwd=True)
-            if not env_path:
-                return
-        dotenv.load_dotenv(env_path)
 
     @classmethod
     def schema(cls) -> list[FieldSchema]:

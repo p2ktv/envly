@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from typing import Any, Callable, Generic, TypeVar, overload, override, final
 
-from envly.errors import EnvError
+from envly.errors import MissingEnvError, ValidationError
 from envly.types import SecretStr
 
 __all__ = ["EnvVar"]
@@ -11,7 +11,7 @@ __all__ = ["EnvVar"]
 T = TypeVar("T", str, int, float, bool, bytes, pathlib.Path, SecretStr)
 
 # Type definition for a validator, which can be either
-# a single callable or a tuple of callable.
+# a single callable or a tuple of callables.
 # Each validator receives the coerced value and returns True if valid.
 Validator = Callable[[T], bool] | tuple[Callable[[T], bool], ...]
 
@@ -115,7 +115,7 @@ class EnvVar(Generic[T]):
 
         Raises
         ------
-        :class:`EnvError`
+        :class:`MissingEnvError`
             If the value couldn't be resolved.
         """
         if effective_name in source:
@@ -125,9 +125,7 @@ class EnvVar(Generic[T]):
         elif self.default is not _MISSING:
             return self.default  # type: ignore[return-value]
         else:
-            raise EnvError(
-                f"Required environment variable {effective_name!r} is missing."
-            )
+            raise MissingEnvError(effective_name)
 
         self._run_validators(effective_name, value)
         return value
@@ -137,14 +135,10 @@ class EnvVar(Generic[T]):
             try:
                 ok = validator(value)
             except Exception as exc:
-                raise EnvError(
-                    f"[{var_name}] validator {i} raised an exception: {exc}"
-                ) from exc
+                raise ValidationError(var_name, value, i) from exc
 
             if not ok:
-                raise EnvError(
-                    f"[{var_name}] validation failed (validator {i}) for value {value!r}."
-                )
+                raise ValidationError(var_name, value, i)
 
     @override
     def __repr__(self) -> str:
