@@ -3,11 +3,13 @@
 Minimal, type-safe environment variable validation for Python.
 
 ```python
+from envly import Environment, StringVar, IntVar, BoolVar
+
 class MyEnv(Environment, prefix="APP_"):
-    HOST    = stringVar()
-    PORT    = intVar(default=8080)
-    DEBUG   = boolVar(default=False)
-    TOKEN   = stringVar(secret=True)
+    HOST    = StringVar()
+    PORT    = IntVar(default=8080)
+    DEBUG   = BoolVar(default=False)
+    TOKEN   = StringVar(secret=True)
 
 env = MyEnv()
 print(env.PORT)   # 8080 —> int, not str
@@ -30,17 +32,18 @@ Every field is declared using a factory function. The type is baked into the fun
 
 | Function | Returns | Notes |
 |---|---|---|
-| `stringVar()` | `str` | Supports `secret=True` |
-| `intVar()` | `int` | |
-| `floatVar()` | `float` | |
-| `boolVar()` | `bool` | Accepts `true/false/1/0/yes/no/on/off` |
-| `enumVar(*choices)` | `str` | Restricts to allowed values |
-| `urlVar()` | `str` | Requires scheme and host |
-| `emailVar()` | `str` | |
-| `pathVar()` | `Path` | Returns `pathlib.Path` |
-| `regexVar(pattern)` | `str` | Must fully match |
-| `listVar(of=)` | `list[T]` | Split from a delimited string |
-| `jsonVar()` | `Any` | Parsed with `json.loads` |
+| `StringVar()` | `str` | Supports `secret=True` |
+| `IntVar()` | `int` | |
+| `FloatVar()` | `float` | |
+| `BytesVar()` | `bytes` | |
+| `BoolVar()` | `bool` | Accepts `true/false/1/0/yes/no/on/off` |
+| `EnumVar(*choices)` | `str` | Restricts to allowed values |
+| `UrlVar()` | `str` | Requires scheme and host |
+| `EmailVar()` | `str` | |
+| `PathVar()` | `Path` | Returns `pathlib.Path` |
+| `RegexVar(pattern)` | `str` | Must fully match |
+| `ListVar(of=)` | `list[T]` | Split from a delimited string |
+| `JsonVar()` | `Any` | Parsed with `json.loads` |
 
 ---
 
@@ -49,7 +52,7 @@ Every field is declared using a factory function. The type is baked into the fun
 All var functions share these keyword arguments:
 
 ```python
-PORT = intVar(
+PORT = IntVar(
     default=8080,                        # used when the var is not set
     validate=lambda x: x < 65536,       # single validator
     validate=(                           # or a tuple of validators
@@ -60,27 +63,27 @@ PORT = intVar(
 )
 ```
 
-### `listVar` (sub-coercion per element)
+### `ListVar` (sub-coercion per element)
 
 ```python
-PORTS   = listVar(of=int)                   # "8080,9000" -> [8080, 9000]
-TAGS    = listVar(of=str, sep=";")          # "api;bot"   -> ["api", "bot"]
-ALLOWED = listVar(of=int, validate=lambda xs: all(x < 65536 for x in xs))
+PORTS   = ListVar(of=int)                   # "8080,9000" -> [8080, 9000]
+TAGS    = ListVar(of=str, sep=";")          # "api;bot"   -> ["api", "bot"]
+ALLOWED = ListVar(of=int, validate=lambda xs: all(x < 65536 for x in xs))
 ```
 
 Whitespace around each element is stripped automatically. Errors include the offending index: `[PORTS[1]] expected an integer, got 'nope'`.
 
-### `jsonVar` (optional type assertion)
+### `JsonVar` (optional type assertion)
 
 ```python
-SETTINGS = jsonVar()           # any valid JSON
-SETTINGS = jsonVar(type=dict)  # asserts the root value is a dict
+SETTINGS = JsonVar()           # any valid JSON
+SETTINGS = JsonVar(type=dict)  # asserts the root value is a dict
 ```
 
-### `stringVar(secret=True)` (redacted values)
+### `StringVar(secret=True)` (redacted values)
 
 ```python
-TOKEN = stringVar(secret=True)
+TOKEN = StringVar(secret=True)
 ```
 
 Returns a `SecretStr`, which is a `str` subclass that redacts itself in `__repr__` and `__str__`, so secrets don't leak into logs. The raw value is accessible via `.reveal()`.
@@ -98,14 +101,14 @@ Pass `prefix` on the class definition to prepend a namespace to every var name.
 
 ```python
 class MyEnv(Environment, prefix="APP_"):
-    PORT = intVar(default=8080)  # reads APP_PORT
+    PORT = IntVar(default=8080)  # reads APP_PORT
 ```
 
 `var_name` always takes precedence over the prefix, letting you opt individual fields out:
 
 ```python
 class MyEnv(Environment, prefix="APP_"):
-    DB_URL = stringVar(var_name="DATABASE_URL")  # reads DATABASE_URL, not APP_DATABASE_URL
+    DB_URL = StringVar(var_name="DATABASE_URL")  # reads DATABASE_URL, not APP_DATABASE_URL
 ```
 
 ---
@@ -135,12 +138,12 @@ MyEnvs compose naturally through class inheritance.
 
 ```python
 class BaseMyEnv(Environment):
-    LOG_LEVEL = enumVar("debug", "info", "warn", "error", default="info")
-    DEBUG     = boolVar(default=False)
+    LOG_LEVEL = EnumVar("debug", "info", "warn", "error", default="info")
+    DEBUG     = BoolVar(default=False)
 
 class MyEnv(BaseMyEnv, prefix="APP_"):
-    HOST  = stringVar()
-    PORT  = intVar(default=8080)
+    HOST  = StringVar()
+    PORT  = IntVar(default=8080)
 ```
 
 ---

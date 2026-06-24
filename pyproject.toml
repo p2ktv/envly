@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "envly"
-version = "0.1.0"
+version = "0.1.1"
 description = "Minimal, type-safe environment variable validation for Python."
 readme = "README.md"
 license = { text = "MIT" }
