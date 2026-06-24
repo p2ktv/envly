@@ -1,29 +1,29 @@
 from __future__ import annotations
 
-from env_typed.coercion import _make_enum_coercer
+import pathlib
+
+from envly.coercion import _coerce_path
 from .var import _MISSING, Validator, EnvVar
 
 __all__ = [
-    "EnumVar",
+    "PathVar",
 ]
 
 
-def EnumVar(
-    *choices: str,
-    default: str | object = _MISSING,
-    validate: Validator[str] | None = None,
+def PathVar(
+    *,
+    default: pathlib.Path | object = _MISSING,
+    validate: Validator[pathlib.Path] | None = None,
     var_name: str | None = None,
-) -> str:
+) -> pathlib.Path:
     """
-    Represents an enum variable in the environment.
+    Represents a path variable in the environment.
 
     Parameters
     ----------
-    choices: :class:`str`
-        List of valid options for the variable.
-    default: :class:`str`
+    default: :class:`pathlib.Path`
         An optional default value.
-    validate: :class:`Validator[str]`
+    validate: :class:`Validator[pathlib.Path]`
         Optional validator(s) for this variable.
     var_name: :class:`str`
         An optional name used to locate the variable in the source.
@@ -31,17 +31,13 @@ def EnumVar(
 
     Returns
     -------
-    :class:`str`
+    :class:`pathlib.Path`
         The coerced value.
     """
-    if not choices:
-        raise TypeError("EnumVar requires at least once choice.")
-
     return EnvVar(
-        coerce=_make_enum_coercer(choices),
+        coerce=_coerce_path,
         default=default,
         validate=validate,
         var_name=var_name,
-        type_label="enum",
-        extra={"choices": list(choices)},
+        type_label="path",
     )  # type: ignore[return-value]

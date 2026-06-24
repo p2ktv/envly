@@ -3,7 +3,7 @@ from __future__ import annotations
 import builtins
 from typing import Callable, Any, overload
 
-from env_typed.coercion import _make_list_coercer, _PRIMITIVE_COERCERS
+from envly.coercion import _make_list_coercer, _PRIMITIVE_COERCERS
 from .var import _MISSING, EnvVar
 
 __all__ = [

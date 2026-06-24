@@ -1,6 +1,6 @@
-from env_typed.env import Environment, FieldSchema
-from env_typed.errors import EnvError
-from env_typed.fields import (
+from envly.env import Environment, FieldSchema
+from envly.errors import EnvError
+from envly.fields import (
     EnvVar,
     BoolVar,
     FloatVar,
@@ -14,7 +14,7 @@ from env_typed.fields import (
     JsonVar,
     ListVar,
 )
-from env_typed.types import SecretStr
+from envly.types import SecretStr
 
 __all__ = [
     "Environment",

@@ -3,8 +3,8 @@ from __future__ import annotations
 import pathlib
 from typing import Any, Callable, Generic, TypeVar, overload, override, final
 
-from env_typed.errors import EnvError
-from env_typed.types import SecretStr
+from envly.errors import EnvError
+from envly.types import SecretStr
 
 __all__ = ["EnvVar"]
 

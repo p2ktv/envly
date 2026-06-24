@@ -4,7 +4,7 @@ import os
 import dotenv
 from typing import Any, ClassVar, TypedDict, override
 
-from env_typed.fields import EnvVar, _MISSING
+from envly.fields import EnvVar, _MISSING
 
 __all__ = ["Environment"]
 

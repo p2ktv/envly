@@ -1,4 +1,4 @@
-# env-typed
+# envly
 
 Minimal, type-safe environment variable validation for Python.
 
@@ -19,14 +19,14 @@ print(env.TOKEN)  # SecretStr('**redacted**')
 ## Installation
 
 ```bash
-pip install env-typed
+pip install envly
 ```
 
 ---
 
 ## Declaring fields
 
-Every field is declared using a typed factory function. The type is baked into the function, so no annotations are required!
+Every field is declared using a factory function. The type is baked into the function, so no annotations are required!
 
 | Function | Returns | Notes |
 |---|---|---|

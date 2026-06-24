@@ -1,27 +1,29 @@
 from __future__ import annotations
 
-from env_typed.coercion import _coerce_float
+from envly.coercion import _make_enum_coercer
 from .var import _MISSING, Validator, EnvVar
 
 __all__ = [
-    "FloatVar",
+    "EnumVar",
 ]
 
 
-def FloatVar(
-    *,
-    default: float | object = _MISSING,
-    validate: Validator[float] | None = None,
+def EnumVar(
+    *choices: str,
+    default: str | object = _MISSING,
+    validate: Validator[str] | None = None,
     var_name: str | None = None,
-) -> float:
+) -> str:
     """
-    Represents a floating integer variable in the environment.
+    Represents an enum variable in the environment.
 
     Parameters
     ----------
-    default: :class:`float`
+    choices: :class:`str`
+        List of valid options for the variable.
+    default: :class:`str`
         An optional default value.
-    validate: :class:`Validator[float]`
+    validate: :class:`Validator[str]`
         Optional validator(s) for this variable.
     var_name: :class:`str`
         An optional name used to locate the variable in the source.
@@ -29,13 +31,17 @@ def FloatVar(
 
     Returns
     -------
-    :class:`float`
+    :class:`str`
         The coerced value.
     """
+    if not choices:
+        raise TypeError("EnumVar requires at least once choice.")
+
     return EnvVar(
-        coerce=_coerce_float,
+        coerce=_make_enum_coercer(choices),
         default=default,
         validate=validate,
         var_name=var_name,
-        type_label="float",
+        type_label="enum",
+        extra={"choices": list(choices)},
     )  # type: ignore[return-value]

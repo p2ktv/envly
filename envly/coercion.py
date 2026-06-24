@@ -5,7 +5,7 @@ import re
 import urllib.parse
 from typing import Callable, Any
 
-from env_typed.errors import EnvError
+from envly.errors import EnvError
 
 
 _BOOL_TRUE = frozenset({"1", "true", "yes", "on"})

@@ -3,7 +3,7 @@ from __future__ import annotations
 import builtins
 from typing import Callable, Any
 
-from env_typed.coercion import _make_json_coercer
+from envly.coercion import _make_json_coercer
 from .var import _MISSING, EnvVar
 
 __all__ = [

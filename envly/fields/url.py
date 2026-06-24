@@ -1,29 +1,26 @@
 from __future__ import annotations
 
-import re
-
-from env_typed.coercion import _make_regex_coercer
+from envly.coercion import _coerce_url
 from .var import _MISSING, Validator, EnvVar
 
 __all__ = [
-    "RegexVar",
+    "UrlVar",
 ]
 
 
-def RegexVar(
-    pattern: str | re.Pattern[str],
+def UrlVar(
     *,
     default: str | object = _MISSING,
     validate: Validator[str] | None = None,
     var_name: str | None = None,
 ) -> str:
     """
-    Represents a RegEx-parsed variable in the environment.
+    Represents a URL variable in the environment.
 
     Parameters
     ----------
-    pattern: :class:`str | re.Pattern[str]`
-        RegEx pattern used for the validation.
+    choices: :class:`str`
+        List of valid options for the variable.
     default: :class:`str`
         An optional default value.
     validate: :class:`Validator[str]`
@@ -37,12 +34,10 @@ def RegexVar(
     :class:`str`
         The coerced value.
     """
-    compiled = re.compile(pattern) if isinstance(pattern, str) else pattern
     return EnvVar(
-        coerce=_make_regex_coercer(compiled),
+        coerce=_coerce_url,
         default=default,
         validate=validate,
         var_name=var_name,
-        type_label="regex",
-        extra={"pattern": compiled.pattern},
+        type_label="url",
     )  # type: ignore[return-value]

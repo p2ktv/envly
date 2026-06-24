@@ -1,25 +1,29 @@
 from __future__ import annotations
 
-from env_typed.coercion import _coerce_str
+import re
+
+from envly.coercion import _make_regex_coercer
 from .var import _MISSING, Validator, EnvVar
 
 __all__ = [
-    "StringVar",
+    "RegexVar",
 ]
 
 
-def StringVar(
+def RegexVar(
+    pattern: str | re.Pattern[str],
     *,
     default: str | object = _MISSING,
     validate: Validator[str] | None = None,
     var_name: str | None = None,
-    secret: bool = False,
 ) -> str:
     """
-    Represents a string variable in the environment.
+    Represents a RegEx-parsed variable in the environment.
 
     Parameters
     ----------
+    pattern: :class:`str | re.Pattern[str]`
+        RegEx pattern used for the validation.
     default: :class:`str`
         An optional default value.
     validate: :class:`Validator[str]`
@@ -27,20 +31,18 @@ def StringVar(
     var_name: :class:`str`
         An optional name used to locate the variable in the source.
         By default it uses the class attribute name.
-    secret: :class:`bool`
-        Whether to hide the value when displaying the variable
-        inside the code. Defaults to `False`.
 
     Returns
     -------
     :class:`str`
         The coerced value.
     """
+    compiled = re.compile(pattern) if isinstance(pattern, str) else pattern
     return EnvVar(
-        coerce=_coerce_str,
+        coerce=_make_regex_coercer(compiled),
         default=default,
         validate=validate,
         var_name=var_name,
-        secret=secret,
-        type_label="SecretStr" if secret else "str",
+        type_label="regex",
+        extra={"pattern": compiled.pattern},
     )  # type: ignore[return-value]

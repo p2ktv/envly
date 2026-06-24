@@ -1,27 +1,27 @@
 from __future__ import annotations
 
-from env_typed.coercion import _coerce_bool
+from envly.coercion import _coerce_int
 from .var import _MISSING, Validator, EnvVar
 
 __all__ = [
-    "BoolVar",
+    "IntVar",
 ]
 
 
-def BoolVar(
+def IntVar(
     *,
-    default: bool | object = _MISSING,
-    validate: Validator[bool] | None = None,
+    default: int | object = _MISSING,
+    validate: Validator[int] | None = None,
     var_name: str | None = None,
-) -> bool:
+) -> int:
     """
-    Represents a boolean variable in the environment.
+    Represents an integer variable in the environment.
 
     Parameters
     ----------
-    default: :class:`bool`
+    default: :class:`int`
         An optional default value.
-    validate: :class:`Validator[bool]`
+    validate: :class:`Validator[int]`
         Optional validator(s) for this variable.
     var_name: :class:`str`
         An optional name used to locate the variable in the source.
@@ -29,13 +29,13 @@ def BoolVar(
 
     Returns
     -------
-    :class:`bool`
+    :class:`int`
         The coerced value.
     """
     return EnvVar(
-        coerce=_coerce_bool,
+        coerce=_coerce_int,
         default=default,
         validate=validate,
         var_name=var_name,
-        type_label="bool",
+        type_label="int",
     )  # type: ignore[return-value]

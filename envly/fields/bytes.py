@@ -1,29 +1,27 @@
 from __future__ import annotations
 
-import pathlib
-
-from env_typed.coercion import _coerce_path
+from envly.coercion import _coerce_bytes
 from .var import _MISSING, Validator, EnvVar
 
 __all__ = [
-    "PathVar",
+    "BytesVar",
 ]
 
 
-def PathVar(
+def BytesVar(
     *,
-    default: pathlib.Path | object = _MISSING,
-    validate: Validator[pathlib.Path] | None = None,
+    default: bytes | object = _MISSING,
+    validate: Validator[bytes] | None = None,
     var_name: str | None = None,
-) -> pathlib.Path:
+) -> bytes:
     """
-    Represents a path variable in the environment.
+    Represents a bytes variable in the environment.
 
     Parameters
     ----------
-    default: :class:`pathlib.Path`
+    default: :class:`bytes`
         An optional default value.
-    validate: :class:`Validator[pathlib.Path]`
+    validate: :class:`Validator[bytes]`
         Optional validator(s) for this variable.
     var_name: :class:`str`
         An optional name used to locate the variable in the source.
@@ -31,13 +29,13 @@ def PathVar(
 
     Returns
     -------
-    :class:`pathlib.Path`
+    :class:`bytes`
         The coerced value.
     """
     return EnvVar(
-        coerce=_coerce_path,
+        coerce=_coerce_bytes,
         default=default,
         validate=validate,
         var_name=var_name,
-        type_label="path",
+        type_label="bytes",
     )  # type: ignore[return-value]

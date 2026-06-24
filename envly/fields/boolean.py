@@ -1,29 +1,27 @@
 from __future__ import annotations
 
-from env_typed.coercion import _coerce_url
+from envly.coercion import _coerce_bool
 from .var import _MISSING, Validator, EnvVar
 
 __all__ = [
-    "UrlVar",
+    "BoolVar",
 ]
 
 
-def UrlVar(
+def BoolVar(
     *,
-    default: str | object = _MISSING,
-    validate: Validator[str] | None = None,
+    default: bool | object = _MISSING,
+    validate: Validator[bool] | None = None,
     var_name: str | None = None,
-) -> str:
+) -> bool:
     """
-    Represents a URL variable in the environment.
+    Represents a boolean variable in the environment.
 
     Parameters
     ----------
-    choices: :class:`str`
-        List of valid options for the variable.
-    default: :class:`str`
+    default: :class:`bool`
         An optional default value.
-    validate: :class:`Validator[str]`
+    validate: :class:`Validator[bool]`
         Optional validator(s) for this variable.
     var_name: :class:`str`
         An optional name used to locate the variable in the source.
@@ -31,13 +29,13 @@ def UrlVar(
 
     Returns
     -------
-    :class:`str`
+    :class:`bool`
         The coerced value.
     """
     return EnvVar(
-        coerce=_coerce_url,
+        coerce=_coerce_bool,
         default=default,
         validate=validate,
         var_name=var_name,
-        type_label="url",
+        type_label="bool",
     )  # type: ignore[return-value]
